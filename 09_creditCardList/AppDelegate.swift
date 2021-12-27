@@ -6,14 +6,52 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseFirestoreSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-
-
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-		// Override point for customization after application launch.
+		
+		// firebase init
+		FirebaseApp.configure()
+		
+		// MARK: Firestore collection input
+		// firebase db 선언
+		let db = Firestore.firestore()
+		// collection 에서 creditCardList 를 찾고, snapshot 과 error 를 불러옴(해당 db에 데이터가 없을 경우에 한번에 데이터를 넣어 주는 경우 사용)
+		db.collection("creditCardList").getDocuments { snapshot, _ in
+			guard snapshot?.isEmpty == true else { return } // snapshot 으로 db가 비어 있는 상태에서만 ture 로 설정
+			let batch = db.batch()
+			
+			let card0Ref = db.collection("creditCardList").document("card0")
+			let card1Ref = db.collection("creditCardList").document("card1")
+			let card2Ref = db.collection("creditCardList").document("card2")
+			let card3Ref = db.collection("creditCardList").document("card3")
+			let card4Ref = db.collection("creditCardList").document("card4")
+			let card5Ref = db.collection("creditCardList").document("card5")
+			let card6Ref = db.collection("creditCardList").document("card6")
+			let card7Ref = db.collection("creditCardList").document("card7")
+			let card8Ref = db.collection("creditCardList").document("card8")
+			let card9Ref = db.collection("creditCardList").document("card9")
+			
+			do {
+				try batch.setData(from: CreditCardDummy.card0, forDocument: card0Ref)
+				try batch.setData(from: CreditCardDummy.card1, forDocument: card1Ref)
+				try batch.setData(from: CreditCardDummy.card2, forDocument: card2Ref)
+				try batch.setData(from: CreditCardDummy.card3, forDocument: card3Ref)
+				try batch.setData(from: CreditCardDummy.card4, forDocument: card4Ref)
+				try batch.setData(from: CreditCardDummy.card5, forDocument: card5Ref)
+				try batch.setData(from: CreditCardDummy.card6, forDocument: card6Ref)
+				try batch.setData(from: CreditCardDummy.card7, forDocument: card7Ref)
+				try batch.setData(from: CreditCardDummy.card8, forDocument: card8Ref)
+				try batch.setData(from: CreditCardDummy.card9, forDocument: card9Ref)
+			} catch let error {
+				print("ERROR: wirting card to Firestore \(error.localizedDescription)")
+			}
+			// batch 에 commit 을 해주어야지 data 가 추가가 됨
+			batch.commit()
+		}
 		return true
 	}
 
